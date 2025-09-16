@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'profile_page.dart';
 
 class PromoBanner extends StatefulWidget {
   const PromoBanner({super.key});
@@ -217,6 +218,20 @@ class DashboardPage extends StatelessWidget {
         currentIndex: 0,
         selectedItemColor: const Color(0xFF20df6c),
         unselectedItemColor: Colors.grey,
+        onTap: (index) {
+          if (index == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProfilePage()),
+            );
+          }
+          if (index == 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const DashboardPage()),
+            );
+          }
+        },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Dashboard"),
           BottomNavigationBarItem(

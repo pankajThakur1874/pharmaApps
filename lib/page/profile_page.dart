@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'dashboard_page.dart';
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -128,15 +130,31 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
 
       // Bottom Nav
+      // ✅ Bottom Navigation
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        selectedItemColor: primaryColor,
+        currentIndex: 0,
+        selectedItemColor: const Color(0xFF20df6c),
         unselectedItemColor: Colors.grey,
-        currentIndex: 2,
+        onTap: (index) {
+          if (index == 4) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProfilePage()),
+            );
+          }
+          if (index == 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const DashboardPage()),
+            );
+          }
+        },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Dashboard"),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Orders"),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: "Products"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart_outlined), label: "Orders"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.local_offer_outlined), label: "Products"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
       ),
