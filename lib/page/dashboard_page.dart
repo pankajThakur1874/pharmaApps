@@ -1,4 +1,98 @@
 import 'package:flutter/material.dart';
+class PromoBanner extends StatefulWidget {
+  const PromoBanner({super.key});
+
+  @override
+  State<PromoBanner> createState() => _PromoBannerState();
+}
+
+class _PromoBannerState extends State<PromoBanner>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(-1.0, 0.0), // start offscreen left
+      end: Offset.zero, // final position
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutBack,
+    ));
+
+    _controller.forward(); // play animation when widget loads
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SlideTransition(
+      position: _slideAnimation,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Container(
+          width: double.infinity, // ✅ Full screen width
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Colors.green, Color(0xFF20df6c)],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("Get 25% OFF",
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                      color: Colors.white)),
+              const SizedBox(height: 6),
+              const Text("on your first order!",
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white)),
+              const SizedBox(height: 6),
+              const Text("Use code: WELCOME25",
+                  style: TextStyle(color: Colors.white, fontSize: 12)),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: () {
+                  // 👉 Handle Order Now button
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Redirect to Orders Page")),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF20df6c),
+                  shape: const StadiumBorder(),
+                ),
+                child: const Text("Order Now"),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -8,145 +102,153 @@ class DashboardPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
-        child: Column(
-          children: [
-            // ✅ Top AppBar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _circleIcon(Icons.menu),
-                  const Text(
-                    "Medication",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  _circleIcon(Icons.shopping_cart),
-                ],
-              ),
-            ),
-
-            // ✅ Search Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: "Search for medicines",
-                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-            ),
-
-            // ✅ Promo Banner
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Colors.green, Color(0xFF20df6c)],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 80), // space for bottom nav
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ✅ Top AppBar
+              Padding(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text("Get 25% OFF",
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1,
-                            color: Colors.white)),
-                    const SizedBox(height: 6),
-                    const Text("on your first order!",
-                        style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white)),
-                    const SizedBox(height: 6),
-                    const Text("Use code: WELCOME25",
-                        style: TextStyle(color: Colors.white, fontSize: 12)),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFF20df6c),
-                        shape: StadiumBorder(),
+                    _circleIcon(Icons.menu),
+                    const Text(
+                      "Medication",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
-                      child: const Text("Order Now"),
-                    )
+                    ),
+                    _circleIcon(Icons.shopping_cart),
                   ],
                 ),
               ),
-            ),
 
-            // ✅ Featured Section
-            _sectionTitle("Featured"),
-            SizedBox(
-              height: 140,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                children: const [
-                  _FeaturedCard(
-                      title: "Pain Relief",
-                      imageUrl:
-                      "https://lh3.googleusercontent.com/aida-public/AB6AXuDaIBGnzQKHfq5yfb7jo3wJIBJ2i-IRC1kRh4vRbio8He-jc4RLBDdQ4v5A5yCWen6KjP7_AduFf9L85ipGwMttv4SBRbssYbIUINI3aKHPfKjALvZoAlSizBmwdSiwmXSalhPyGWV2Ss61u7gA-n4SsUJxyVVsu2lp-9T5ngPct9RY7Y8Wjy9vPC8i1IRjrrnQXr1M0NzQiRL6lDSEpScKju4u2-t5kfXkMFEX4FGGYWJ7gzEgkJUW2LeUAvydERf5Cji_IEW-ZN8"),
-                  _FeaturedCard(
-                      title: "Allergy Relief",
-                      imageUrl:
-                      "https://lh3.googleusercontent.com/aida-public/AB6AXuB4QHWbrJxQ85TZhyTYTyQBENvHRkOqSqZ0EER7tJv54TUvOfcFj9S7h_7P8qprOXMdGPbAy-FykMNfqvsajCRNbnlzkqxBUHq4hNZ5pKrSIahapWhOJ5HbRKkikYHTaZdXoCFhUYkTkKUq14cwfW_KuRyy5BsNW3Bs4ORkpFFFRrgEXUiWGMugMGq-X239crzrxuyFn86isJaZAcfa2dWZmVG0ZghZeUDDcE4sH7z4k5EwG3rpGTaMGUsXWaJkXrZ_MhvyZbAGXf4"),
-                  _FeaturedCard(
-                      title: "Cold & Flu",
-                      imageUrl:
-                      "https://lh3.googleusercontent.com/aida-public/AB6AXuBP-Zsbus7rXGpL0ifBvq4-Ggnx98lICVsB4P6mjfDZaMrCdL_jdI_72S1n4LGLFLYyM4-W8fBKzG804M0jdPivJMJ6Qy5Z21r9r5tMEQW1sTBeva0Ir9f2OhrTvL4OcydqQ4uM8bjAoJmHlJxBNRhgbeXMKTVIwBlc1TMndqN-ZVw9MgihKf7bUnkYNfgTbmTbsUyuwY10D6GfNRExB_77P09JQ660lbdbd8I_7r_LaNB0DwGALMkpqQ640bx5lW6ycU5MxH7FHiw"),
-                ],
+              // ✅ Search Bar
+              Padding(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: "Search for medicines",
+                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    contentPadding:
+                    const EdgeInsets.symmetric(vertical: 0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
               ),
-            ),
 
-            // ✅ Categories Section
-            _sectionTitle("Categories"),
-            Expanded(
-              child: GridView.count(
-                padding: const EdgeInsets.all(12),
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                children: const [
-                  _CategoryCard(
-                      title: "Pain Relief",
-                      imageUrl:
-                      "https://lh3.googleusercontent.com/aida-public/AB6AXuA3jMwzFQazEGrOm0Pa957UuXCSWZBZZQadlG0Pc2z8JB1Kv_xzk1o-3kg-H3d2eyVe8GteJ3ZEJIbxfOScegUa_HimwbX7VmD_wfLp45lxLX7ItuBPBk0Z8ZVSqw1Xb6YVPSToElTZJdcEtufzh8ox1cZ-B08pKJQNCaj9MX_EGtT7-7iFllA14-45XHe4vEe-QMb0vt0HebJXxegpZwPORRb1Ga2zP_Unsj5esE4Rvgjtcz4TNUwxMrPUtCEowO-3J_wujoSJQsE"),
-                  _CategoryCard(
-                      title: "Allergy Relief",
-                      imageUrl:
-                      "https://lh3.googleusercontent.com/aida-public/AB6AXuBYTBEy5f1G3TFWsNsQKvQpp9uuM9QRyblwhVBToHhQy_EodPhUiJphwUU42-06KnWyuJRZcmeD_UNPuKf0lxJEVWng_O0FRBdJCgX7KdSseQYr8zhy2n5pJ_VvVnNundZMXiETjiO85_mG2kON_ei4lqqwaMizE_19DUrgSZwSeNJF2PFaKXk5hCZy53SdXaAv1wEZLQfRKShVpI5Oqk9-REG78El9pX1LhXiCyVlQk099YF0-iNZ-Wzv8ih7D5V23Ag9S7F5FZBk"),
-                  _CategoryCard(
-                      title: "Cold & Flu",
-                      imageUrl:
-                      "https://lh3.googleusercontent.com/aida-public/AB6AXuBqBeqrJLWQ9P7IUewMghj9_NZo-QiRSdEVfTvyUfBvzAi8VFQrenX1lVmHVSvQdZb8Gyj75di39cd8rkYQAuhYuQaiplqKcYEb5CZDr6XZogayuyvisbxiQTR7gz_qQE2INR9xyjNShEFUNA8-QuoruARnXIjBI1uO_KcKsKGUOmImevgP_SILB2gsNRPyaqpqPXJsmTYAK6tDO6HrLZLoOBuBedeu7c9PGqddSmR0v9DmLzEeH39k4ArhFszAALLbNwCGoOn1jEo"),
-                  _CategoryCard(
-                      title: "Vitamins",
-                      imageUrl:
-                      "https://lh3.googleusercontent.com/aida-public/AB6AXuCFK_uEU-_B7gAZSHH7bZlSLRZDsOVGk48P5Pu-x5i0JfOYH2-Rj7Mpcp0dYk6YStBTLfIxr2ijy1S1PJzkJ2dCXKrDQR-z99S1LOyQkOFAKd0z-rxOcukWxY6sqvswJsXkQHlYN14UJqdUcgjIuiDkTRr6ha8hEuyTgWKOPqtXLrYDb_rt3JHl5Ux2qVIZ1LZhfvzYIpIL23AmI9iEeziTC1QAG4qa-qSm-LgWuPJq9gU7ryXkpBjW2_NCWWRh0owczwjfyTYWLEE"),
-                ],
+              // ✅ Promo Banner
+              PromoBanner(),
+              // Padding(
+              //   padding: const EdgeInsets.all(16.0),
+              //   child: Container(
+              //     padding: const EdgeInsets.all(16),
+              //     decoration: BoxDecoration(
+              //       gradient: const LinearGradient(
+              //         colors: [Colors.green, Color(0xFF20df6c)],
+              //         begin: Alignment.centerLeft,
+              //         end: Alignment.centerRight,
+              //       ),
+              //       borderRadius: BorderRadius.circular(16),
+              //     ),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         const Text("Get 25% OFF",
+              //             style: TextStyle(
+              //                 fontSize: 12,
+              //                 fontWeight: FontWeight.bold,
+              //                 letterSpacing: 1,
+              //                 color: Colors.white)),
+              //         const SizedBox(height: 6),
+              //         const Text("on your first order!",
+              //             style: TextStyle(
+              //                 fontSize: 22,
+              //                 fontWeight: FontWeight.bold,
+              //                 color: Colors.white)),
+              //         const SizedBox(height: 6),
+              //         const Text("Use code: WELCOME25",
+              //             style:
+              //             TextStyle(color: Colors.white, fontSize: 12)),
+              //         const SizedBox(height: 12),
+              //         ElevatedButton(
+              //           onPressed: () {},
+              //           style: ElevatedButton.styleFrom(
+              //             backgroundColor: Colors.white,
+              //             foregroundColor: const Color(0xFF20df6c),
+              //             shape: const StadiumBorder(),
+              //           ),
+              //           child: const Text("Order Now"),
+              //         )
+              //       ],
+              //     ),
+              //   ),
+              // ),
+
+              // ✅ Featured Section
+              _sectionTitle("Featured"),
+              SizedBox(
+                height: 140,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  children: const [
+                    _FeaturedCard(
+                        title: "Pain Relief",
+                        imageUrl:
+                        "https://picsum.photos/200/100?random=1"),
+                    _FeaturedCard(
+                        title: "Allergy Relief",
+                        imageUrl:
+                        "https://picsum.photos/200/100?random=2"),
+                    _FeaturedCard(
+                        title: "Cold & Flu",
+                        imageUrl:
+                        "https://picsum.photos/200/100?random=3"),
+                  ],
+                ),
               ),
-            ),
-          ],
+
+              // ✅ Categories Section
+              _sectionTitle("Categories"),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: GridView.count(
+                  physics:
+                  const NeverScrollableScrollPhysics(), // disable grid scroll
+                  shrinkWrap: true, // fit inside parent scroll
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  children: const [
+                    _CategoryCard(
+                        title: "Pain Relief",
+                        imageUrl: "https://picsum.photos/100?random=4"),
+                    _CategoryCard(
+                        title: "Allergy Relief",
+                        imageUrl: "https://picsum.photos/100?random=5"),
+                    _CategoryCard(
+                        title: "Cold & Flu",
+                        imageUrl: "https://picsum.photos/100?random=6"),
+                    _CategoryCard(
+                        title: "Vitamins",
+                        imageUrl: "https://picsum.photos/100?random=7"),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
 
@@ -160,7 +262,7 @@ class DashboardPage extends StatelessWidget {
           BottomNavigationBarItem(
               icon: Icon(Icons.shopping_cart_outlined), label: "Orders"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart_outlined), label: "Products"),
+              icon: Icon(Icons.local_offer_outlined), label: "Products"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
       ),
@@ -213,8 +315,8 @@ class _FeaturedCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(title,
-              style:
-              const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+              style: const TextStyle(
+                  fontSize: 14, fontWeight: FontWeight.w500)),
         ],
       ),
     );
@@ -240,7 +342,8 @@ class _CategoryCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: Image.network(imageUrl, height: 40, width: 40, fit: BoxFit.cover),
+            child: Image.network(imageUrl,
+                height: 40, width: 40, fit: BoxFit.cover),
           ),
           const SizedBox(width: 12),
           Expanded(
