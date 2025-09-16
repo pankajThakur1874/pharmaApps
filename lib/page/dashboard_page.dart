@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class PromoBanner extends StatefulWidget {
   const PromoBanner({super.key});
 
@@ -99,6 +100,13 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final categories = [
+      {"title": "Pain Relief", "imageUrl": "https://picsum.photos/100?random=4"},
+      {"title": "Allergy Relief", "imageUrl": "https://picsum.photos/100?random=5"},
+      {"title": "Cold & Flu", "imageUrl": "https://picsum.photos/100?random=6"},
+      {"title": "Vitamins", "imageUrl": "https://picsum.photos/100?random=7"},
+    ];
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
@@ -150,51 +158,6 @@ class DashboardPage extends StatelessWidget {
 
               // ✅ Promo Banner
               PromoBanner(),
-              // Padding(
-              //   padding: const EdgeInsets.all(16.0),
-              //   child: Container(
-              //     padding: const EdgeInsets.all(16),
-              //     decoration: BoxDecoration(
-              //       gradient: const LinearGradient(
-              //         colors: [Colors.green, Color(0xFF20df6c)],
-              //         begin: Alignment.centerLeft,
-              //         end: Alignment.centerRight,
-              //       ),
-              //       borderRadius: BorderRadius.circular(16),
-              //     ),
-              //     child: Column(
-              //       crossAxisAlignment: CrossAxisAlignment.start,
-              //       children: [
-              //         const Text("Get 25% OFF",
-              //             style: TextStyle(
-              //                 fontSize: 12,
-              //                 fontWeight: FontWeight.bold,
-              //                 letterSpacing: 1,
-              //                 color: Colors.white)),
-              //         const SizedBox(height: 6),
-              //         const Text("on your first order!",
-              //             style: TextStyle(
-              //                 fontSize: 22,
-              //                 fontWeight: FontWeight.bold,
-              //                 color: Colors.white)),
-              //         const SizedBox(height: 6),
-              //         const Text("Use code: WELCOME25",
-              //             style:
-              //             TextStyle(color: Colors.white, fontSize: 12)),
-              //         const SizedBox(height: 12),
-              //         ElevatedButton(
-              //           onPressed: () {},
-              //           style: ElevatedButton.styleFrom(
-              //             backgroundColor: Colors.white,
-              //             foregroundColor: const Color(0xFF20df6c),
-              //             shape: const StadiumBorder(),
-              //           ),
-              //           child: const Text("Order Now"),
-              //         )
-              //       ],
-              //     ),
-              //   ),
-              // ),
 
               // ✅ Featured Section
               _sectionTitle("Featured"),
@@ -224,27 +187,24 @@ class DashboardPage extends StatelessWidget {
               _sectionTitle("Categories"),
               Padding(
                 padding: const EdgeInsets.all(12.0),
-                child: GridView.count(
+                child: GridView.builder(
                   physics:
                   const NeverScrollableScrollPhysics(), // disable grid scroll
                   shrinkWrap: true, // fit inside parent scroll
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  children: const [
-                    _CategoryCard(
-                        title: "Pain Relief",
-                        imageUrl: "https://picsum.photos/100?random=4"),
-                    _CategoryCard(
-                        title: "Allergy Relief",
-                        imageUrl: "https://picsum.photos/100?random=5"),
-                    _CategoryCard(
-                        title: "Cold & Flu",
-                        imageUrl: "https://picsum.photos/100?random=6"),
-                    _CategoryCard(
-                        title: "Vitamins",
-                        imageUrl: "https://picsum.photos/100?random=7"),
-                  ],
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 3 / 2,
+                  ),
+                  itemCount: categories.length,
+                  itemBuilder: (context, index) {
+                    final category = categories[index];
+                    return _CategoryCard(
+                      title: category["title"]!,
+                      imageUrl: category["imageUrl"]!,
+                    );
+                  },
                 ),
               ),
             ],
